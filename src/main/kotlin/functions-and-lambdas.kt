@@ -40,7 +40,7 @@ fun runTransformation(f: (String, Int) -> String): String {
 
 fun main() {
     // lambda 表达式的参数类型是可选的，如果能够推断出来的话：
-    val joinedToString = items.fold("Elements:", { acc, i -> acc + " " + i })
+    val joinedToString = items.fold("Elements:", { acc, i -> "$acc $i" })
 
     // 函数引用也可以用于高阶函数调用：
     val product = items.fold(1, Int::times)
