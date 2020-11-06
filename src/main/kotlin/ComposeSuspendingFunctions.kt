@@ -34,14 +34,20 @@ fun main() = runBlocking {
 		 * async 风格的函数
 		 * https://www.kotlincn.net/docs/reference/coroutines/composing-suspending-functions.html#async-%E9%A3%8E%E6%A0%BC%E7%9A%84%E5%87%BD%E6%95%B0
 		 */
-		// 我们可以在协程外面启动异步执行
-		val one = somethingUsefulOneAsync()
-		val two = somethingUsefulTwoAsync()
-		// 但是等待结果必须调用其它的挂起或者阻塞
-		// 当我们等待结果的时候，这里我们使用 `runBlocking { …… }` 来阻塞主线程
-		runBlocking {
-			println("The answer is ${one.await() + two.await()}")
-		}
+//		// 我们可以在协程外面启动异步执行
+//		val one = somethingUsefulOneAsync()
+//		val two = somethingUsefulTwoAsync()
+//		// 但是等待结果必须调用其它的挂起或者阻塞
+//		// 当我们等待结果的时候，这里我们使用 `runBlocking { …… }` 来阻塞主线程
+//		runBlocking {
+//			println("The answer is ${one.await() + two.await()}")
+//		}
+
+		/**
+		 * 使用 async 的结构化并发
+		 * https://www.kotlincn.net/docs/reference/coroutines/composing-suspending-functions.html#%E4%BD%BF%E7%94%A8-async-%E7%9A%84%E7%BB%93%E6%9E%84%E5%8C%96%E5%B9%B6%E5%8F%91
+		 */
+		println("The answer is ${concurrentSum()}")
 	}
 	println("Completed in $time ms")
 }
@@ -53,6 +59,13 @@ fun somethingUsefulOneAsync() = GlobalScope.async {
 
 fun somethingUsefulTwoAsync() = GlobalScope.async {
 	doSomethingUsefulTwo()
+}
+
+// 使用 async 的结构化并发
+suspend fun concurrentSum(): Int = coroutineScope {
+	val one = async { doSomethingUsefulOne() }
+	val two = async { doSomethingUsefulTwo() }
+	one.await() + two.await()
 }
 
 suspend fun doSomethingUsefulOne(): Int {
